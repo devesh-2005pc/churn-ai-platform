@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import {
     Zap,
     Search,
@@ -36,12 +36,11 @@ const Predictions = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const { data } = await axios.post('http://localhost:8000/predict', formData);
+            const { data } = await api.post('/customers/predict', formData);
             setResult(data);
         } catch (err) {
             console.error('ML Prediction Error:', err);
-            // Fallback for demo if service is down, but ideally user ensures it's up
-            alert('ML Service not connected. Ensure Python API is running on port 8000.');
+            alert('Prediction failed. Ensure the ML Service is reachable via the backend.');
         } finally {
             setLoading(false);
         }
@@ -154,8 +153,8 @@ const Predictions = () => {
                             </h3>
                             {result && (
                                 <div className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${result.risk_level === 'High' ? 'bg-rose-500/20 text-rose-400 border-rose-500/20' :
-                                        result.risk_level === 'Medium' ? 'bg-amber-500/20 text-amber-400 border-amber-500/20' :
-                                            'bg-emerald-500/20 text-emerald-400 border-emerald-500/20'
+                                    result.risk_level === 'Medium' ? 'bg-amber-500/20 text-amber-400 border-amber-500/20' :
+                                        'bg-emerald-500/20 text-emerald-400 border-emerald-500/20'
                                     } shadow-[0_0_15px_rgba(0,0,0,0.5)]`}>
                                     {result.risk_level} Criticality
                                 </div>

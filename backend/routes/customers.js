@@ -84,4 +84,15 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+// Churn Prediction Proxy
+router.post('/predict', async (req, res) => {
+    try {
+        const response = await axios.post(`${process.env.ML_SERVICE_URL}/predict`, req.body);
+        res.json(response.data);
+    } catch (err) {
+        console.error('Prediction proxy error:', err.message);
+        res.status(500).json({ error: 'Prediction failed' });
+    }
+});
+
 module.exports = router;

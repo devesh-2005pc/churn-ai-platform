@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import {
     FileText,
     Download,
@@ -21,7 +21,7 @@ const Reports = () => {
     const exportCSV = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.get('http://localhost:5000/api/customers');
+            const { data } = await api.get('/customers');
 
             const headers = ['Name', 'Email', 'Plan', 'Spend', 'Risk Level', 'Churn Prob'];
             const csvContent = [
@@ -48,7 +48,7 @@ const Reports = () => {
     const exportJSON = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.get('http://localhost:5000/api/customers');
+            const { data } = await api.get('/customers');
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             downloadFile(blob, `churn-data-${new Date().toISOString().split('T')[0]}.json`);
         } catch (err) {

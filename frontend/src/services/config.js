@@ -1,0 +1,1 @@
+export const API_BASE_URL = "https://churn-backend-api-12mb.onrender.com/api";

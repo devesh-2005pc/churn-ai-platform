@@ -18,13 +18,30 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         setLoading(true);
         setError('');
+
         try {
-            await register(formData);
+
+            const payload = {
+                ...formData,
+                role: "user"
+            };
+
+            await register(payload);
+
             navigate('/login');
+
         } catch (err) {
-            setError(err.response?.data?.error || 'Registration failed');
+
+            console.error("Register Error:", err);
+
+            setError(
+                err?.response?.data?.error ||
+                "Registration failed. Try again."
+            );
+
         } finally {
             setLoading(false);
         }

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 const AuthContext = createContext();
 
@@ -16,29 +16,8 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    // Axios Interceptor for Authorization Header
-    axios.interceptors.request.use((config) => {
-        const token = sessionStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    });
-
-    // Global 401 Handler
-    axios.interceptors.response.use(
-        (response) => response,
-        (error) => {
-            if (error.response?.status === 401) {
-                logout();
-                window.location.href = '/login';
-            }
-            return Promise.reject(error);
-        }
-    );
-
     const login = async (email, password) => {
-        const { data } = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+        const { data } = await api.post('/auth/login', { email, password });
         setUser(data.user);
         sessionStorage.setItem('token', data.token);
         sessionStorage.setItem('user', JSON.stringify(data.user));
@@ -47,7 +26,7 @@ export const AuthProvider = ({ children }) => {
     const register = async (userData) => {
         try {
             console.log('Attempting registration with:', userData);
-            await axios.post('http://localhost:5000/api/auth/register', userData);
+            await api.post('/auth/register', userData);
         } catch (err) {
             console.error('Registration API Error:', err.response?.data || err.message);
             throw err;
@@ -56,7 +35,7 @@ export const AuthProvider = ({ children }) => {
 
     const updateProfile = async (updates) => {
         try {
-            const { data } = await axios.put('http://localhost:5000/api/auth/update', updates);
+            const { data } = await api.put('/auth/update', updates);
             setUser(data.user);
             sessionStorage.setItem('user', JSON.stringify(data.user));
             return data;
@@ -70,7 +49,6 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('user');
-        delete axios.defaults.headers.common['Authorization'];
     };
 
     return (

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import CustomerTable from '../components/CustomerTable';
 import CustomerForm from '../components/CustomerForm';
 import { motion } from 'framer-motion';
@@ -13,7 +13,7 @@ const Customers = () => {
 
     const fetchCustomers = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/customers');
+            const { data } = await api.get('/customers');
             setCustomers(data);
         } catch (err) {
             console.error('Error fetching customers:', err);
@@ -39,7 +39,7 @@ const Customers = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this customer?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/customers/${id}`);
+                await api.delete(`/customers/${id}`);
                 fetchCustomers();
             } catch (err) {
                 alert('Delete failed');
@@ -50,9 +50,9 @@ const Customers = () => {
     const handleSubmit = async (formData) => {
         try {
             if (editingCustomer) {
-                await axios.put(`http://localhost:5000/api/customers/${editingCustomer._id}`, formData);
+                await api.put(`/customers/${editingCustomer._id}`, formData);
             } else {
-                await axios.post('http://localhost:5000/api/customers', formData);
+                await api.post('/customers', formData);
             }
             setIsFormOpen(false);
             fetchCustomers();

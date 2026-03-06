@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import {
     Users,
     AlertTriangle,
@@ -74,7 +74,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const { data } = await axios.get('http://localhost:5000/api/customers');
+                const { data } = await api.get('/customers');
                 const total = data.length;
                 const high = data.filter(c => c.churnRiskLevel === 'High').length;
                 const avgChurn = total > 0
