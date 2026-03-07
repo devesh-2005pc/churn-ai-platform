@@ -10,7 +10,8 @@ import {
     MoreVertical,
     Activity,
     Shield,
-    Zap
+    Zap,
+    Download
 } from 'lucide-react';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -60,6 +61,7 @@ const Dashboard = () => {
         avgChurn: '0%',
         monthlyRevenue: '$0'
     });
+    const [exporting, setExporting] = useState(false);
 
     const [chartData, setChartData] = useState([
         { name: 'Mon', churn: 12, rev: 400 },
@@ -95,6 +97,39 @@ const Dashboard = () => {
         fetchStats();
     }, []);
 
+    const handleExport = async () => {
+        setExporting(true);
+        try {
+            const { data } = await api.get('/customers');
+            const headers = ['Name', 'Email', 'Plan', 'Spend ($)', 'Risk Level', 'Churn Prob (%)', 'CLV ($)'];
+            const csvContent = [
+                headers.join(','),
+                ...data.map(c => [
+                    `"${c.name}"`,
+                    `"${c.email}"`,
+                    `"${c.subscriptionPlan}"`,
+                    c.monthlySpend,
+                    `"${c.churnRiskLevel}"`,
+                    Math.round((c.churnProbability || 0) * 100),
+                    Math.round(c.CLV || 0)
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `churn-intelligence-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Export failed:', err);
+            alert('Failed to generate report');
+        } finally {
+            setExporting(false);
+        }
+    };
+
     const COLORS = ['#10b981', '#f59e0b', '#ef4444'];
     const pieData = [
         { name: 'Healthy', value: 400 },
@@ -120,8 +155,17 @@ const Dashboard = () => {
                     <button className="px-5 py-2.5 bg-slate-900 border border-white/5 rounded-xl text-sm font-bold text-slate-300 hover:text-white hover:bg-slate-800 transition-all">
                         Today
                     </button>
-                    <button className="px-5 py-2.5 bg-primary-600 rounded-xl text-sm font-bold text-white hover:bg-primary-500 transition-all shadow-lg shadow-primary-900/20">
-                        Export Report
+                    <button
+                        onClick={handleExport}
+                        disabled={exporting}
+                        className="px-5 py-2.5 bg-primary-600 rounded-xl text-sm font-bold text-white hover:bg-primary-500 transition-all shadow-lg shadow-primary-900/20 disabled:opacity-50 flex items-center gap-2"
+                    >
+                        {exporting ? (
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                            <Download size={16} />
+                        )}
+                        <span>{exporting ? 'Exporting...' : 'Export Report'}</span>
                     </button>
                 </div>
             </motion.div>

@@ -52,8 +52,8 @@ const CustomerTable = ({ customers, onEdit, onDelete }) => {
                                 key={risk}
                                 onClick={() => setFilterRisk(risk)}
                                 className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${filterRisk === risk
-                                        ? 'bg-primary-600 text-white shadow-lg'
-                                        : 'text-slate-500 hover:text-slate-300'
+                                    ? 'bg-primary-600 text-white shadow-lg'
+                                    : 'text-slate-500 hover:text-slate-300'
                                     }`}
                             >
                                 {risk}
@@ -61,7 +61,33 @@ const CustomerTable = ({ customers, onEdit, onDelete }) => {
                         ))}
                     </div>
 
-                    <button className="p-3 bg-slate-900 border border-white/5 rounded-2xl text-slate-400 hover:text-white transition-all">
+                    <button
+                        onClick={() => {
+                            const headers = ['Name', 'Email', 'Plan', 'Spend ($)', 'Risk Level', 'Churn Prob (%)', 'CLV ($)'];
+                            const csvContent = [
+                                headers.join(','),
+                                ...filtered.map(c => [
+                                    `"${c.name}"`,
+                                    `"${c.email}"`,
+                                    `"${c.subscriptionPlan}"`,
+                                    c.monthlySpend,
+                                    `"${c.churnRiskLevel}"`,
+                                    Math.round((c.churnProbability || 0) * 100),
+                                    Math.round(c.CLV || 0)
+                                ].join(','))
+                            ].join('\n');
+
+                            const blob = new Blob([csvContent], { type: 'text/csv' });
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `customer-intelligence-${new Date().toISOString().split('T')[0]}.csv`;
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                        }}
+                        className="p-3 bg-slate-900 border border-white/5 rounded-2xl text-slate-400 hover:text-white transition-all"
+                        title="Export current view as CSV"
+                    >
                         <Download size={18} />
                     </button>
                 </div>
@@ -109,7 +135,7 @@ const CustomerTable = ({ customers, onEdit, onDelete }) => {
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-2">
                                                 <div className={`w-1.5 h-1.5 rounded-full ${customer.subscriptionPlan === 'Enterprise' ? 'bg-indigo-400' :
-                                                        customer.subscriptionPlan === 'Pro' ? 'bg-primary-400' : 'bg-slate-400'
+                                                    customer.subscriptionPlan === 'Pro' ? 'bg-primary-400' : 'bg-slate-400'
                                                     }`} />
                                                 <span className="text-sm font-bold text-slate-300">{customer.subscriptionPlan}</span>
                                             </div>
