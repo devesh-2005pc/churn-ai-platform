@@ -77,17 +77,6 @@ const Sidebar = ({ isOpen, toggle }) => {
                     </nav>
 
                     <div className="p-6 border-t border-white/5 space-y-4">
-                        <div className="p-4 bg-gradient-to-br from-primary-600/20 to-emerald-600/5 rounded-2xl border border-white/5 relative overflow-hidden group">
-                            <Zap className="absolute top-[-10px] right-[-10px] w-16 h-16 text-primary-500/10 -rotate-12 group-hover:rotate-0 transition-transform duration-500" />
-                            <p className="text-xs font-bold text-primary-400 uppercase tracking-widest mb-1">Scale Up</p>
-                            <p className="text-xs text-slate-400 mb-3">Activate Enterprise AI engine</p>
-                            <button
-                                onClick={() => window.dispatchEvent(new CustomEvent('openUpgradeModal'))}
-                                className="w-full py-2 bg-primary-600 hover:bg-primary-500 text-white text-xs font-bold rounded-lg transition-colors shadow-lg shadow-primary-900/40"
-                            >
-                                Upgrade Plan
-                            </button>
-                        </div>
                         <button
                             onClick={handleLogout}
                             className="sidebar-link w-full text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20"
@@ -149,74 +138,13 @@ const Navbar = ({ toggleSidebar }) => {
     );
 };
 
-const UpgradeModal = ({ isOpen, onClose }) => (
-    <AnimatePresence>
-        {isOpen && (
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-md"
-            >
-                <motion.div
-                    initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                    animate={{ scale: 1, opacity: 1, y: 0 }}
-                    exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                    className="max-w-xl w-full glass-card p-10 relative overflow-hidden"
-                >
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-primary-600/10 rounded-full blur-[100px] -z-10" />
-
-                    <button onClick={onClose} className="absolute top-6 right-6 text-slate-500 hover:text-white transition-colors">
-                        <X size={24} />
-                    </button>
-
-                    <div className="text-center mb-10">
-                        <div className="inline-flex p-4 bg-primary-500/10 text-primary-400 rounded-3xl mb-6 border border-primary-500/20">
-                            <Zap size={32} fill="currentColor" />
-                        </div>
-                        <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Neural Enterprise</h2>
-                        <p className="text-slate-400 mt-2">Unlock hyper-scale churn intelligence</p>
-                    </div>
-
-                    <div className="space-y-4 mb-10">
-                        {[
-                            'Unlimited Customer Sync',
-                            'Neural Prediction API Access',
-                            'Custom LLM Integration',
-                            '24/7 Priority Signal Support'
-                        ].map((feature) => (
-                            <div key={feature} className="flex items-center gap-3 p-4 bg-white/5 rounded-2xl border border-white/5">
-                                <ChevronRight className="text-primary-500 w-5 h-5" />
-                                <span className="text-sm font-bold text-slate-300">{feature}</span>
-                            </div>
-                        ))}
-                    </div>
-
-                    <button className="w-full py-5 bg-gradient-to-r from-primary-600 to-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-primary-900/40 hover:scale-[1.02] transition-transform uppercase tracking-widest text-sm">
-                        Initialize Upgrade Flow
-                    </button>
-                    <p className="text-center text-[10px] text-slate-500 mt-6 uppercase tracking-widest font-bold">Standard Enterprise Billing Applies</p>
-                </motion.div>
-            </motion.div>
-        )}
-    </AnimatePresence>
-);
-
 const Layout = ({ children }) => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
-
-    React.useEffect(() => {
-        const handleOpen = () => setUpgradeModalOpen(true);
-        window.addEventListener('openUpgradeModal', handleOpen);
-        return () => window.removeEventListener('openUpgradeModal', handleOpen);
-    }, []);
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-200">
             <Sidebar isOpen={sidebarOpen} toggle={() => setSidebarOpen(!sidebarOpen)} />
             <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-            <UpgradeModal isOpen={upgradeModalOpen} onClose={() => setUpgradeModalOpen(false)} />
             <main className="lg:pl-72 pt-20 min-h-screen relative overflow-hidden">
                 {/* Content background glows */}
                 <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary-600/5 rounded-full blur-[150px] -z-10" />

@@ -14,6 +14,7 @@ const app = express();
 
 const allowedOrigins = [
     "http://localhost:5173",
+    "http://localhost:5174",
     "https://churn-ai-platform.vercel.app",
     "https://churn-ai-platform-5bslmi6rt-devesh-2005pcs-projects.vercel.app"
 ];

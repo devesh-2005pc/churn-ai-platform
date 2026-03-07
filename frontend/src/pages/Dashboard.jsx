@@ -156,8 +156,8 @@ const Dashboard = () => {
                         </div>
                     </div>
 
-                    <div className="h-[360px] w-full relative z-10">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="h-[360px] min-h-[360px] w-full relative z-10 overflow-hidden">
+                        <ResponsiveContainer width="99%" height="99%">
                             <AreaChart data={chartData}>
                                 <defs>
                                     <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
@@ -217,8 +217,8 @@ const Dashboard = () => {
                         <p className="text-sm text-slate-500 font-medium">Customer base health distribution</p>
                     </div>
 
-                    <div className="h-[240px] w-full relative">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <div className="h-[240px] min-h-[240px] w-full relative overflow-hidden">
+                        <ResponsiveContainer width="99%" height="99%">
                             <PieChart>
                                 <Pie
                                     data={pieData}
